@@ -6,8 +6,8 @@ import VideoModal from './VideoModal'
 
 const videos = [
   {
-    id: 'TxYoXras3WI',
-    title: 'I am Stuck',
+    id: 'sCV1W7zGhpI',
+    title: 'Love! Peace! Joy!',
     category: 'Short Film',
     role: 'Editor',
     featured: true,
@@ -20,6 +20,13 @@ const videos = [
     featured: false,
   },
   {
+    id: 'dn3oMdXs_OE',
+    title: 'Contact',
+    category: 'Independent Project',
+    role: 'Editor & Cinematographer',
+    featured: false,
+  },
+  {
     id: 'EzriLrAqcOU',
     title: 'Cinematography Reel 2023',
     category: 'DP Reel',
@@ -27,17 +34,10 @@ const videos = [
     featured: false,
   },
   {
-    id: 'sCV1W7zGhpI',
-    title: 'Love! Peace! Joy!',
+    id: 'TxYoXras3WI',
+    title: 'I am Stuck',
     category: 'Short Film',
     role: 'Editor',
-    featured: false,
-  },
-  {
-    id: 'dn3oMdXs_OE',
-    title: 'Contact',
-    category: 'Independent Project',
-    role: 'Editor & Cinematographer',
     featured: false,
   },
 ]
@@ -124,7 +124,7 @@ export default function Portfolio() {
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Portfolio</h2>
           </div>
           <p className="text-gray-600 text-sm max-w-xs leading-relaxed">
-            Click any project to watch. Titles are placeholders — update them in the code.
+            Click any project to watch.
           </p>
         </motion.div>
 

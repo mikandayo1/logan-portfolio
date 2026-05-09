@@ -15,18 +15,19 @@ export default function Hero() {
 
   return (
     <section ref={ref} className="relative h-screen overflow-hidden">
-      {/* YouTube video background */}
+      {/* Local video background */}
       <motion.div style={{ scale: videoScale }} className="absolute inset-0">
-        <iframe
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ width: '177.78vh', minWidth: '100%', minHeight: '100%', height: '56.25vw' }}
-          src="https://www.youtube.com/embed/TxYoXras3WI?autoplay=1&mute=1&loop=1&playlist=TxYoXras3WI&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&playsinline=1"
-          allow="autoplay; fullscreen"
-          frameBorder="0"
-          title="Showreel"
-        />
+        <video
+          className="absolute inset-0 w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+        >
+          <source src="/reel.mp4" type="video/mp4" />
+        </video>
         {/* Layered overlays for cinematic feel */}
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-black/55" />
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-black/30" />
         <div className="absolute inset-0 bg-gradient-to-br from-violet-950/25 via-transparent to-violet-950/15" />
       </motion.div>
@@ -77,9 +78,9 @@ export default function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.9, duration: 1 }}
-          className="text-gray-400 text-sm md:text-base font-light tracking-wide max-w-xs md:max-w-sm"
+          className="text-gray-400 text-sm md:text-base font-light tracking-wide whitespace-nowrap"
         >
-          Based in Los Angeles · Crafting stories that matter
+          Based in Los Angeles · Stories with depth
         </motion.p>
 
         <motion.div
