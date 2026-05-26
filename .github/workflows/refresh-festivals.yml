@@ -1,0 +1,76 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .github/workflows/refresh-festivals.yml
+#
+# Copy this file to your website repo at:
+#   .github/workflows/refresh-festivals.yml
+#
+# Prerequisites:
+#   1. Add a GitHub secret named FF_COOKIE with your FilmFreeway session cookie.
+#      (Settings → Secrets and variables → Actions → New repository secret)
+#      Value: the full cookie string from F12, e.g. "_session=abc123; ..."
+#
+#   2. Two JSON files live in public/data/:
+#        festivals_all.json  ← auto-updated by this Action (full archive, all statuses)
+#        festivals.json      ← manually curated by you (what shows on the website)
+#
+#   3. Workflow:
+#        - This Action updates festivals_all.json every Monday automatically.
+#        - When you have a new result, copy it from festivals_all.json → festivals.json,
+#          then commit. Vercel auto-deploys on push to main.
+# ─────────────────────────────────────────────────────────────────────────────
+
+name: Refresh FilmFreeway festival data
+
+on:
+  schedule:
+    # Run every Monday at 08:00 UTC
+    - cron: "0 8 * * 1"
+  workflow_dispatch:  # allow manual trigger from GitHub UI
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install beautifulsoup4 requests
+
+      - name: Fetch FilmFreeway data
+        env:
+          FF_COOKIE: ${{ secrets.FF_COOKIE }}
+        run: |
+          curl -s \
+            -H "Cookie: $FF_COOKIE" \
+            -H "Accept: application/json, text/javascript, */*; q=0.01" \
+            -H "X-Requested-With: XMLHttpRequest" \
+            -H "Referer: https://filmfreeway.com/submissions/my_submissions" \
+            -H "User-Agent: Mozilla/5.0" \
+            "https://filmfreeway.com/submissions/render_my_submissions.json" \
+            > /tmp/ff_raw.json
+
+      - name: Parse into festivals_all.json
+        run: |
+          python tools/parse_filmfreeway.py \
+            --file /tmp/ff_raw.json \
+            --all-statuses \
+            --output public/data/festivals_all.json
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add public/data/festivals_all.json
+          if git diff --cached --quiet; then
+            echo "No changes to festivals_all.json — skipping commit."
+          else
+            git commit -m "chore: refresh full festival archive from FilmFreeway"
+            git push
+          fi
