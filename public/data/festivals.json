@@ -1,11 +1,16 @@
 {
-  "updated": "2026-05-25T00:00:00Z",
+  "updated": "2026-05-27T04:31:19.864Z",
   "films": [
     {
       "title": "Next Station: Lok Ma Chau",
       "festivals": [
         {
           "name": "New York HiCine Film Festival",
+          "status": "winner",
+          "label": "Award Winner"
+        },
+        {
+          "name": "Macau International Film Festival",
           "status": "winner",
           "label": "Award Winner"
         },
@@ -20,14 +25,9 @@
           "label": "Honorable Mention"
         },
         {
-          "name": "ARFF Barcelona",
+          "name": "Barcelona International Film Festival",
           "status": "honorable_mention",
           "label": "Honorable Mention"
-        },
-        {
-          "name": "Macau International Film Festival",
-          "status": "selected",
-          "label": "Official Selection"
         }
       ]
     },
@@ -36,11 +36,6 @@
       "festivals": [
         {
           "name": "Shanghai International Short Film Week",
-          "status": "selected",
-          "label": "Official Selection"
-        },
-        {
-          "name": "Hellbender Student Film Festival",
           "status": "selected",
           "label": "Official Selection"
         }

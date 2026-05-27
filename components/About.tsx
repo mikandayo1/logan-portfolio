@@ -42,16 +42,15 @@ export default function About() {
             className="space-y-7"
           >
             <p className="text-gray-400 leading-relaxed text-base">
-              I&apos;m Yujie &ldquo;Logan&rdquo; Luo, an editor based in Los Angeles, currently
-              studying at AFI Conservatory &apos;26. Originally from Nanchang, China, with
-              undergraduate film training in Macau, I bring a cross-cultural perspective to
-              every frame.
+              I&apos;m Yujie &ldquo;Logan&rdquo; Luo, an editor based in Los Angeles,
+              completing my MFA in Editing at AFI Conservatory &apos;26 — where I also serve
+              as a Teaching Assistant. Originally from Nanchang, China, with undergraduate
+              film training in Macau.
             </p>
             <p className="text-gray-400 leading-relaxed text-base">
-              Certified in Avid Media Composer, I specialize in crafting visually engaging
-              narratives that challenge stereotypes, explore social issues, and spotlight
-              diverse perspectives — work recognized at the Student Los Angeles Film Awards
-              and Milan Shorts Film Festival.
+              Certified in Avid Media Composer, I cut narrative short films and work as an
+              Assistant Editor across LA productions. My work has been selected for festivals
+              across three continents.
             </p>
 
             {/* Stats */}

@@ -20,14 +20,14 @@
           "label": "Honorable Mention"
         },
         {
-          "name": "ARFF Barcelona",
+          "name": "Barcelona International Film Festival",
           "status": "honorable_mention",
           "label": "Honorable Mention"
         },
         {
           "name": "Macau International Film Festival",
-          "status": "selected",
-          "label": "Official Selection"
+          "status": "winner",
+          "label": "Award Winner"
         }
       ]
     },
