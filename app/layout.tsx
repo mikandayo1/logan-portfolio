@@ -8,10 +8,10 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: 'Yujie "Logan" Luo | Editor & Cinematographer',
+  title: 'Yujie "Logan" Luo | Editor',
   description:
-    'Film editor and cinematographer based in Los Angeles. AFI Conservatory. Crafting visually engaging stories that challenge stereotypes and spotlight diverse perspectives.',
-  keywords: ['film editor', 'cinematographer', 'Los Angeles', 'AFI Conservatory', 'portfolio'],
+    'Film editor based in Los Angeles. MFA in Editing, AFI Conservatory. Narrative short films, Assistant Editor.',
+  keywords: ['film editor', 'assistant editor', 'DIT', 'Los Angeles', 'AFI Conservatory', 'portfolio'],
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
