@@ -5,7 +5,7 @@ import Image from 'next/image'
 import VideoModal from './VideoModal'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Status = 'published' | 'coming_soon'
+type Status = 'published' | 'private' | 'coming_soon'
 type Category = 'All' | 'Narrative Short' | 'Music Video' | 'Commercial'
 
 interface VideoItem {
@@ -17,6 +17,7 @@ interface VideoItem {
   year: string
   director?: string
   status: Status
+  image?: string                   // custom still image path (for private films)
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -70,6 +71,18 @@ const videos: VideoItem[] = [
     role: 'Cinematographer',
     year: '2023',
     status: 'published',
+  },
+  // ── Private (festival circuit, no public embed) ─────────────────────────────
+  {
+    uid: 'lmc',
+    id: null,
+    title: 'Next Station: Lok Ma Chau',
+    category: 'Narrative Short',
+    role: 'Editor',
+    year: '2024',
+    director: 'dir. Yijian Jason Jiang',
+    status: 'private',
+    image: '/lmc-still.jpg',
   },
   // ── Coming Soon ────────────────────────────────────────────────────────────
   {
@@ -189,6 +202,52 @@ function PublishedCard({ item, onClick }: { item: VideoItem; onClick: () => void
   )
 }
 
+// ── Private card (festival circuit, still image, no playback) ─────────────────
+function PrivateCard({ item }: { item: VideoItem }) {
+  return (
+    <motion.div
+      layout
+      key={item.uid}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
+      className="group relative overflow-hidden"
+    >
+      <div className="relative aspect-video overflow-hidden bg-gray-950">
+        <Image
+          src={item.image!}
+          alt={item.title}
+          fill
+          className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-50"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-violet-900/0 group-hover:bg-violet-900/10 transition-colors duration-500" />
+
+        <div className="absolute top-4 right-4">
+          <span className="text-violet-400/60 text-[9px] tracking-[0.25em] uppercase">Festival Circuit</span>
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
+          <div className="flex items-end justify-between gap-2">
+            <div className="min-w-0">
+              <p className="text-violet-400 text-[9px] tracking-[0.22em] uppercase mb-1">{item.role}</p>
+              <h3 className="text-white font-semibold text-sm leading-tight truncate">{item.title}</h3>
+              {item.director && (
+                <p className="text-gray-500 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
+              )}
+            </div>
+            <span className="text-gray-600 text-[10px] tracking-widest flex-shrink-0">{item.year}</span>
+          </div>
+        </div>
+
+        <div className="absolute inset-0 border border-violet-500/0 group-hover:border-violet-500/25 transition-colors duration-500" />
+      </div>
+    </motion.div>
+  )
+}
+
 // ── Coming Soon card ───────────────────────────────────────────────────────────
 function ComingSoonCard({ item }: { item: VideoItem }) {
   return (
@@ -237,13 +296,10 @@ export default function Portfolio() {
   const [activeCategory, setActiveCategory] = useState<Category>('All')
   const [selected, setSelected] = useState<VideoItem | null>(null)
 
-  // published first, coming_soon after
+  const statusOrder: Record<Status, number> = { published: 0, private: 1, coming_soon: 2 }
   const filtered = videos
     .filter(v => activeCategory === 'All' || v.category === activeCategory)
-    .sort((a, b) => {
-      if (a.status === b.status) return 0
-      return a.status === 'published' ? -1 : 1
-    })
+    .sort((a, b) => statusOrder[a.status] - statusOrder[b.status])
 
   const counts: Record<Category, number> = {
     All: videos.length,
@@ -305,6 +361,8 @@ export default function Portfolio() {
             {filtered.map(item =>
               item.status === 'published' ? (
                 <PublishedCard key={item.uid} item={item} onClick={() => setSelected(item)} />
+              ) : item.status === 'private' ? (
+                <PrivateCard key={item.uid} item={item} />
               ) : (
                 <ComingSoonCard key={item.uid} item={item} />
               )
