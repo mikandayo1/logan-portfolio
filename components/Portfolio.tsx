@@ -5,20 +5,22 @@ import Image from 'next/image'
 import VideoModal from './VideoModal'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Status = 'published' | 'private' | 'coming_soon'
-type Category = 'All' | 'Narrative Short' | 'Music Video' | 'Commercial'
+type Tag = 'Narrative Short' | 'Music Video' | 'Commercial' | 'Promotional' | 'Cantonese' | 'Mandarin'
+type Status = 'published' | 'coming_soon'
 
 interface VideoItem {
-  uid: string                      // unique key — never changes
-  id: string | null                // YouTube ID, null if not released
+  uid: string
+  id: string | null
   title: string
-  category: Exclude<Category, 'All'>
+  tags: Tag[]
   role: string
   year: string
   director?: string
   status: Status
-  image?: string                   // custom still image path (for private films)
+  protected?: boolean
 }
+
+const ALL_TAGS: Tag[] = ['Narrative Short', 'Music Video', 'Commercial', 'Promotional', 'Cantonese', 'Mandarin']
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const videos: VideoItem[] = [
@@ -27,7 +29,7 @@ const videos: VideoItem[] = [
     uid: 'lpj',
     id: 'sCV1W7zGhpI',
     title: 'Love! Peace! Joy!',
-    category: 'Narrative Short',
+    tags: ['Narrative Short'],
     role: 'Editor',
     year: '2024',
     director: 'dir. Evan Korycki',
@@ -37,7 +39,7 @@ const videos: VideoItem[] = [
     uid: 'almi',
     id: 'JIraNgXvPIA',
     title: 'A Little Minor Issue',
-    category: 'Narrative Short',
+    tags: ['Narrative Short'],
     role: 'Editor',
     year: '2025',
     director: 'dir. Harry Chiao',
@@ -47,7 +49,7 @@ const videos: VideoItem[] = [
     uid: 'contact',
     id: 'dn3oMdXs_OE',
     title: 'Contact',
-    category: 'Narrative Short',
+    tags: ['Narrative Short', 'Cantonese'],
     role: 'Editor & Cinematographer',
     year: '2023',
     director: 'dir. Yujie Logan Luo',
@@ -57,7 +59,7 @@ const videos: VideoItem[] = [
     uid: 'stuck',
     id: 'TxYoXras3WI',
     title: "I'm Stuck",
-    category: 'Narrative Short',
+    tags: ['Narrative Short'],
     role: 'Editor',
     year: '2025',
     director: 'dir. Zishu Zhou',
@@ -67,29 +69,55 @@ const videos: VideoItem[] = [
     uid: 'reel23',
     id: 'EzriLrAqcOU',
     title: 'Cinematography Reel 2023',
-    category: 'Narrative Short',
+    tags: ['Narrative Short'],
     role: 'Cinematographer',
     year: '2023',
     status: 'published',
   },
-  // ── Private (festival circuit, no public embed) ─────────────────────────────
   {
-    uid: 'lmc',
-    id: null,
-    title: 'Next Station: Lok Ma Chau',
-    category: 'Narrative Short',
+    uid: 'maque',
+    id: 'RB1H9MYnQJ4',
+    title: '麻雀 Flying in the Grey',
+    tags: ['Narrative Short', 'Cantonese'],
     role: 'Editor',
-    year: '2024',
-    director: 'dir. Yijian Jason Jiang',
-    status: 'private',
-    image: '/lmc-still.jpg',
+    year: '2023',
+    status: 'published',
+  },
+  {
+    uid: 'nightlife',
+    id: '8zm5zsqbvzs',
+    title: '帶我去找夜生活',
+    tags: ['Music Video', 'Mandarin'],
+    role: 'Editor',
+    year: '2022',
+    status: 'published',
+  },
+  {
+    uid: 'art',
+    id: 'tpw9OzTOhRg',
+    title: '藝術為你而來',
+    tags: ['Promotional', 'Mandarin'],
+    role: 'Editor',
+    year: '2021',
+    status: 'published',
+    protected: true,
+  },
+  {
+    uid: 'census',
+    id: '6MBpZOOot10',
+    title: '數說人口 · 普查數據中的澳門模樣',
+    tags: ['Promotional', 'Cantonese'],
+    role: 'Editor',
+    year: '2022',
+    status: 'published',
+    protected: true,
   },
   // ── Coming Soon ────────────────────────────────────────────────────────────
   {
     uid: 'little-egypt',
     id: null,
     title: 'Little Egypt',
-    category: 'Narrative Short',
+    tags: ['Narrative Short'],
     role: 'Editor',
     year: '2026',
     director: 'dir. Jason Wolfmiller',
@@ -99,7 +127,7 @@ const videos: VideoItem[] = [
     uid: 'mv-2023',
     id: null,
     title: 'Music Video',
-    category: 'Music Video',
+    tags: ['Music Video'],
     role: 'Editor',
     year: '2023',
     status: 'coming_soon',
@@ -108,7 +136,7 @@ const videos: VideoItem[] = [
     uid: 'mv-2026-a',
     id: null,
     title: 'Music Video',
-    category: 'Music Video',
+    tags: ['Music Video'],
     role: 'Editor',
     year: '2026',
     status: 'coming_soon',
@@ -117,7 +145,7 @@ const videos: VideoItem[] = [
     uid: 'mv-2026-b',
     id: null,
     title: 'Music Video',
-    category: 'Music Video',
+    tags: ['Music Video'],
     role: 'Editor',
     year: '2026',
     status: 'coming_soon',
@@ -126,37 +154,136 @@ const videos: VideoItem[] = [
     uid: 'commercial-2026',
     id: null,
     title: 'Commercial Project',
-    category: 'Commercial',
+    tags: ['Commercial'],
     role: 'Editor',
     year: '2026',
     status: 'coming_soon',
   },
 ]
 
-// ── AE credits ────────────────────────────────────────────────────────────────
+// ── AE & Script Supervisor credits ────────────────────────────────────────────
 const aeCredits = [
-  { title: 'Old Habits Die Hard',            director: 'dir. Jason Wolfmiller',       year: '2025' },
-  { title: 'Captain Marisol and Peach Tree', director: 'dir. Sahej Singh Nandrajog', year: '2025' },
-  { title: 'Mr. Wrong',                      director: 'dir. Kaylin Allshouse',       year: '2025' },
-  { title: 'Federal Crisis',                 director: 'dir. Hannah Pike',            year: '2024' },
-  { title: 'Breakfast',                      director: 'dir. Tamás Hevér',            year: '2024' },
+  { title: 'Old Habits Die Hard',            director: 'dir. Jason Wolfmiller',        year: '2025' },
+  { title: 'Captain Marisol and Peach Tree', director: 'dir. Sahej Singh Nandrajog',  year: '2025' },
+  { title: 'Mr. Wrong',                      director: 'dir. Kaylin Allshouse',        year: '2025' },
+  { title: 'Federal Crisis',                 director: 'dir. Hannah Pike',             year: '2024' },
+  { title: 'Breakfast',                      director: 'dir. Tamás Hevér',             year: '2024' },
 ]
-
-// ── Script Supervisor credits ─────────────────────────────────────────────────
 const ssCredits = [
   { title: 'The Day She Arrives', director: 'dir. Jiaxin (Kristal) Li', year: '2026' },
   { title: 'Ghost House',         director: 'dir. Harry Chiao',         year: '2025' },
   { title: 'Sweetheart',          director: 'dir. Tamás Hevér',         year: '2025' },
 ]
 
-const CATEGORIES: Category[] = ['All', 'Narrative Short', 'Music Video', 'Commercial']
+// ── Password modal ────────────────────────────────────────────────────────────
+const PASSWORD = '123456'
+
+function PasswordModal({
+  title,
+  onSuccess,
+  onClose,
+}: {
+  title: string
+  onSuccess: () => void
+  onClose: () => void
+}) {
+  const [value, setValue] = useState('')
+  const [error, setError] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (value === PASSWORD) {
+      onSuccess()
+    } else {
+      setError(true)
+      setValue('')
+      setTimeout(() => inputRef.current?.focus(), 50)
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-6"
+      onClick={onClose}
+    >
+      <div className="absolute inset-0 bg-black/95 backdrop-blur-lg" />
+      <motion.div
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.25 }}
+        className="relative w-full max-w-sm border border-white/10 bg-[#0d0d0d] p-8"
+        onClick={e => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-600 hover:text-gray-400 text-xs tracking-widest"
+        >
+          ✕
+        </button>
+
+        <div className="mb-6">
+          <p className="text-violet-400 text-[9px] tracking-[0.35em] uppercase mb-2">Private Content</p>
+          <h3 className="text-white font-medium text-sm leading-snug">{title}</h3>
+        </div>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            ref={inputRef}
+            autoFocus
+            type="password"
+            value={value}
+            onChange={e => { setValue(e.target.value); setError(false) }}
+            placeholder="Enter password"
+            className="w-full bg-black border border-white/10 px-4 py-3 text-sm text-white placeholder-gray-700 focus:outline-none focus:border-violet-500/60 transition-colors"
+          />
+          {error && (
+            <p className="text-red-400/70 text-[10px] tracking-wider">Incorrect password.</p>
+          )}
+          <button
+            type="submit"
+            className="w-full bg-violet-600 hover:bg-violet-700 text-white py-3 text-[10px] tracking-[0.2em] uppercase transition-colors"
+          >
+            View
+          </button>
+        </form>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// ── Tag chip ──────────────────────────────────────────────────────────────────
+const tagStyle: Partial<Record<Tag, string>> = {
+  Cantonese: 'text-sky-400/70',
+  Mandarin:  'text-amber-400/70',
+}
+
+function TagPill({ tag }: { tag: Tag }) {
+  return (
+    <span className={`text-[9px] tracking-[0.18em] uppercase ${tagStyle[tag] ?? 'text-violet-400/60'}`}>
+      {tag}
+    </span>
+  )
+}
 
 // ── Published card ─────────────────────────────────────────────────────────────
-function PublishedCard({ item, onClick }: { item: VideoItem; onClick: () => void }) {
+function PublishedCard({
+  item,
+  onClick,
+}: {
+  item: VideoItem
+  onClick: () => void
+}) {
+  const langTags = item.tags.filter(t => t === 'Cantonese' || t === 'Mandarin')
+  const typeTags = item.tags.filter(t => t !== 'Cantonese' && t !== 'Mandarin')
+
   return (
     <motion.div
       layout
-      key={item.uid}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -175,19 +302,34 @@ function PublishedCard({ item, onClick }: { item: VideoItem; onClick: () => void
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
         <div className="absolute inset-0 bg-violet-900/0 group-hover:bg-violet-900/15 transition-colors duration-500" />
 
+        {/* Lock badge */}
+        {item.protected && (
+          <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/60 backdrop-blur-sm px-2 py-1">
+            <svg className="w-2.5 h-2.5 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            <span className="text-violet-400 text-[9px] tracking-widest uppercase">Private</span>
+          </div>
+        )}
+
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <div className="w-12 h-12 rounded-full border border-white/50 flex items-center justify-center backdrop-blur-sm bg-black/20">
-            <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
+            {item.protected
+              ? <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+              : <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            }
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
           <div className="flex items-end justify-between gap-2">
             <div className="min-w-0">
-              <p className="text-violet-400 text-[9px] tracking-[0.22em] uppercase mb-1">{item.role}</p>
-              <h3 className="text-white font-semibold text-sm leading-tight truncate">{item.title}</h3>
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                {typeTags.map(t => <TagPill key={t} tag={t} />)}
+                {langTags.map(t => <TagPill key={t} tag={t} />)}
+                <span className="text-gray-500 text-[9px] tracking-[0.18em] uppercase">{item.role}</span>
+              </div>
+              <h3 className="text-white font-semibold text-sm leading-tight">{item.title}</h3>
               {item.director && (
                 <p className="text-gray-500 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
               )}
@@ -195,53 +337,6 @@ function PublishedCard({ item, onClick }: { item: VideoItem; onClick: () => void
             <span className="text-gray-600 text-[10px] tracking-widest flex-shrink-0">{item.year}</span>
           </div>
         </div>
-
-        <div className="absolute inset-0 border border-violet-500/0 group-hover:border-violet-500/25 transition-colors duration-500" />
-      </div>
-    </motion.div>
-  )
-}
-
-// ── Private card (festival circuit, still image, no playback) ─────────────────
-function PrivateCard({ item }: { item: VideoItem }) {
-  return (
-    <motion.div
-      layout
-      key={item.uid}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="group relative overflow-hidden"
-    >
-      <div className="relative aspect-video overflow-hidden bg-gray-950">
-        <Image
-          src={item.image!}
-          alt={item.title}
-          fill
-          className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-50"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-violet-900/0 group-hover:bg-violet-900/10 transition-colors duration-500" />
-
-        <div className="absolute top-4 right-4">
-          <span className="text-violet-400/60 text-[9px] tracking-[0.25em] uppercase">Festival Circuit</span>
-        </div>
-
-        <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-          <div className="flex items-end justify-between gap-2">
-            <div className="min-w-0">
-              <p className="text-violet-400 text-[9px] tracking-[0.22em] uppercase mb-1">{item.role}</p>
-              <h3 className="text-white font-semibold text-sm leading-tight truncate">{item.title}</h3>
-              {item.director && (
-                <p className="text-gray-500 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
-              )}
-            </div>
-            <span className="text-gray-600 text-[10px] tracking-widest flex-shrink-0">{item.year}</span>
-          </div>
-        </div>
-
         <div className="absolute inset-0 border border-violet-500/0 group-hover:border-violet-500/25 transition-colors duration-500" />
       </div>
     </motion.div>
@@ -253,7 +348,6 @@ function ComingSoonCard({ item }: { item: VideoItem }) {
   return (
     <motion.div
       layout
-      key={item.uid}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
@@ -262,11 +356,9 @@ function ComingSoonCard({ item }: { item: VideoItem }) {
       <div className="relative aspect-video bg-[#0c0c0c] border border-white/[0.05]">
         <div
           className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `repeating-linear-gradient(-45deg, #fff 0px, #fff 1px, transparent 1px, transparent 14px)`,
-          }}
+          style={{ backgroundImage: `repeating-linear-gradient(-45deg,#fff 0px,#fff 1px,transparent 1px,transparent 14px)` }}
         />
-        <div className="absolute top-4 right-4 flex items-center gap-1.5">
+        <div className="absolute top-3 right-3 flex items-center gap-1.5">
           <span className="relative flex h-1.5 w-1.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-50" />
             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-violet-500" />
@@ -274,14 +366,30 @@ function ComingSoonCard({ item }: { item: VideoItem }) {
           <span className="text-violet-400/50 text-[9px] tracking-[0.25em] uppercase">In Production</span>
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <p className="text-violet-400/30 text-[9px] tracking-[0.22em] uppercase mb-1">{item.role}</p>
+          <p className="text-violet-400/30 text-[9px] tracking-[0.18em] uppercase mb-1">{item.role}</p>
           <h3 className="text-gray-600 font-semibold text-sm">{item.title}</h3>
-          {item.director && (
-            <p className="text-gray-700 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
-          )}
+          {item.director && <p className="text-gray-700 text-[10px] mt-0.5">{item.director}</p>}
           <span className="text-gray-700 text-[10px] tracking-widest mt-1 block">{item.year}</span>
         </div>
       </div>
+    </motion.div>
+  )
+}
+
+// ── Credit row ────────────────────────────────────────────────────────────────
+function CreditRow({ credit, delay, inView }: { credit: { title: string; director: string; year: string }; delay: number; inView: boolean }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -12 }}
+      animate={inView ? { opacity: 1, x: 0 } : {}}
+      transition={{ duration: 0.5, delay }}
+      className="flex items-baseline justify-between gap-4 py-3.5 border-b border-white/[0.06] first:border-t first:border-white/[0.06]"
+    >
+      <div className="min-w-0">
+        <span className="text-white text-sm font-medium tracking-wide block">{credit.title}</span>
+        <span className="text-gray-600 text-[10px] tracking-wide mt-0.5 block">{credit.director}</span>
+      </div>
+      <span className="text-gray-700 text-[10px] tracking-widest flex-shrink-0">{credit.year}</span>
     </motion.div>
   )
 }
@@ -293,19 +401,32 @@ export default function Portfolio() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const aeInView = useInView(aeRef, { once: true, margin: '-80px' })
 
-  const [activeCategory, setActiveCategory] = useState<Category>('All')
+  const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [selected, setSelected] = useState<VideoItem | null>(null)
+  const [pendingProtected, setPendingProtected] = useState<VideoItem | null>(null)
 
-  const statusOrder: Record<Status, number> = { published: 0, private: 1, coming_soon: 2 }
+  function toggleTag(tag: Tag) {
+    setActiveTags(prev =>
+      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
+    )
+  }
+
+  // Intersection filter: video must have ALL selected tags
   const filtered = videos
-    .filter(v => activeCategory === 'All' || v.category === activeCategory)
-    .sort((a, b) => statusOrder[a.status] - statusOrder[b.status])
+    .filter(v =>
+      activeTags.length === 0 || activeTags.every(t => v.tags.includes(t))
+    )
+    .sort((a, b) => {
+      if (a.status === b.status) return 0
+      return a.status === 'published' ? -1 : 1
+    })
 
-  const counts: Record<Category, number> = {
-    All: videos.length,
-    'Narrative Short': videos.filter(v => v.category === 'Narrative Short').length,
-    'Music Video': videos.filter(v => v.category === 'Music Video').length,
-    Commercial: videos.filter(v => v.category === 'Commercial').length,
+  function handleCardClick(item: VideoItem) {
+    if (item.protected) {
+      setPendingProtected(item)
+    } else {
+      setSelected(item)
+    }
   }
 
   return (
@@ -324,34 +445,42 @@ export default function Portfolio() {
             <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Portfolio</h2>
           </motion.div>
 
-          {/* Category tabs */}
+          {/* Tag filter */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.7, delay: 0.12 }}
-            className="flex items-center gap-0 mb-10 border-b border-white/[0.08]"
+            className="flex flex-wrap items-center gap-2 mb-10"
           >
-            {CATEGORIES.map(cat => (
+            {ALL_TAGS.map(tag => {
+              const active = activeTags.includes(tag)
+              const isLang = tag === 'Cantonese' || tag === 'Mandarin'
+              return (
+                <button
+                  key={tag}
+                  onClick={() => toggleTag(tag)}
+                  className={`px-4 py-1.5 text-[10px] tracking-[0.18em] uppercase border transition-all duration-200 ${
+                    active
+                      ? isLang
+                        ? tag === 'Cantonese'
+                          ? 'border-sky-500/70 bg-sky-950/30 text-sky-300'
+                          : 'border-amber-500/70 bg-amber-950/30 text-amber-300'
+                        : 'border-violet-500/70 bg-violet-950/30 text-violet-300'
+                      : 'border-white/[0.1] text-gray-600 hover:border-white/20 hover:text-gray-400'
+                  }`}
+                >
+                  {tag}
+                </button>
+              )
+            })}
+            {activeTags.length > 0 && (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`relative px-5 py-3 text-[10px] tracking-[0.2em] uppercase transition-colors duration-200 ${
-                  activeCategory === cat ? 'text-white' : 'text-gray-600 hover:text-gray-400'
-                }`}
+                onClick={() => setActiveTags([])}
+                className="px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-gray-700 hover:text-gray-500 transition-colors"
               >
-                {cat}
-                <span className={`ml-1.5 text-[9px] ${activeCategory === cat ? 'text-violet-400' : 'text-gray-700'}`}>
-                  {counts[cat]}
-                </span>
-                {activeCategory === cat && (
-                  <motion.div
-                    layoutId="tab-underline"
-                    className="absolute bottom-0 left-0 right-0 h-px bg-violet-500"
-                    transition={{ duration: 0.22, ease: 'easeInOut' }}
-                  />
-                )}
+                Clear ✕
               </button>
-            ))}
+            )}
           </motion.div>
         </div>
 
@@ -360,9 +489,7 @@ export default function Portfolio() {
           <AnimatePresence mode="popLayout">
             {filtered.map(item =>
               item.status === 'published' ? (
-                <PublishedCard key={item.uid} item={item} onClick={() => setSelected(item)} />
-              ) : item.status === 'private' ? (
-                <PrivateCard key={item.uid} item={item} />
+                <PublishedCard key={item.uid} item={item} onClick={() => handleCardClick(item)} />
               ) : (
                 <ComingSoonCard key={item.uid} item={item} />
               )
@@ -370,7 +497,11 @@ export default function Portfolio() {
           </AnimatePresence>
         </motion.div>
 
-        {/* ── AE Credits ─────────────────────────────────────────────────────── */}
+        {filtered.length === 0 && (
+          <p className="text-gray-700 text-sm tracking-wider text-center py-20">No projects match this filter.</p>
+        )}
+
+        {/* Credits */}
         <div ref={aeRef} className="mt-20 pt-16 border-t border-white/[0.05]">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -378,58 +509,38 @@ export default function Portfolio() {
             transition={{ duration: 0.8 }}
           >
             <p className="text-violet-400 text-[10px] tracking-[0.35em] uppercase mb-10">Credits</p>
-
             <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
-
-              {/* Assistant Editor */}
               <div>
                 <p className="text-gray-500 text-[10px] tracking-[0.25em] uppercase mb-6">Assistant Editor</p>
-                {aeCredits.map((credit, i) => (
-                  <motion.div
-                    key={credit.title}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={aeInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.1 + i * 0.07 }}
-                    className="flex items-baseline justify-between gap-4 py-3.5 border-b border-white/[0.06] first:border-t first:border-white/[0.06]"
-                  >
-                    <div className="min-w-0">
-                      <span className="text-white text-sm font-medium tracking-wide block">{credit.title}</span>
-                      <span className="text-gray-600 text-[10px] tracking-wide mt-0.5 block">{credit.director}</span>
-                    </div>
-                    <span className="text-gray-700 text-[10px] tracking-widest flex-shrink-0">{credit.year}</span>
-                  </motion.div>
-                ))}
+                {aeCredits.map((c, i) => <CreditRow key={c.title} credit={c} delay={0.1 + i * 0.07} inView={aeInView} />)}
               </div>
-
-              {/* Script Supervisor */}
               <div>
                 <p className="text-gray-500 text-[10px] tracking-[0.25em] uppercase mb-6">Script Supervisor</p>
-                {ssCredits.map((credit, i) => (
-                  <motion.div
-                    key={credit.title}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={aeInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ duration: 0.5, delay: 0.2 + i * 0.07 }}
-                    className="flex items-baseline justify-between gap-4 py-3.5 border-b border-white/[0.06] first:border-t first:border-white/[0.06]"
-                  >
-                    <div className="min-w-0">
-                      <span className="text-white text-sm font-medium tracking-wide block">{credit.title}</span>
-                      <span className="text-gray-600 text-[10px] tracking-wide mt-0.5 block">{credit.director}</span>
-                    </div>
-                    <span className="text-gray-700 text-[10px] tracking-widest flex-shrink-0">{credit.year}</span>
-                  </motion.div>
-                ))}
+                {ssCredits.map((c, i) => <CreditRow key={c.title} credit={c} delay={0.2 + i * 0.07} inView={aeInView} />)}
               </div>
-
             </div>
           </motion.div>
         </div>
 
       </div>
 
+      {/* Modals */}
+      <AnimatePresence>
+        {pendingProtected && (
+          <PasswordModal
+            key="pw-modal"
+            title={pendingProtected.title}
+            onSuccess={() => {
+              setSelected(pendingProtected)
+              setPendingProtected(null)
+            }}
+            onClose={() => setPendingProtected(null)}
+          />
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {selected?.id && (
-          <VideoModal videoId={selected.id} title={selected.title} onClose={() => setSelected(null)} />
+          <VideoModal key="video-modal" videoId={selected.id} title={selected.title} onClose={() => setSelected(null)} />
         )}
       </AnimatePresence>
     </section>
