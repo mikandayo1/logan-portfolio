@@ -20,8 +20,6 @@ interface VideoItem {
   protected?: boolean
 }
 
-const ALL_TAGS: Tag[] = ['Narrative Short', 'Music Video', 'Commercial', 'Promotional', 'Cantonese', 'Mandarin']
-
 // ── Data ──────────────────────────────────────────────────────────────────────
 const videos: VideoItem[] = [
   // ── Published ──────────────────────────────────────────────────────────────
@@ -414,25 +412,15 @@ export default function Portfolio() {
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   const aeInView = useInView(aeRef, { once: true, margin: '-80px' })
 
-  const [activeTags, setActiveTags] = useState<Tag[]>([])
   const [selected, setSelected] = useState<VideoItem | null>(null)
   const [pendingProtected, setPendingProtected] = useState<VideoItem | null>(null)
 
-  function toggleTag(tag: Tag) {
-    setActiveTags(prev =>
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    )
+  const byStatus = (a: VideoItem, b: VideoItem) => {
+    if (a.status === b.status) return 0
+    return a.status === 'published' ? -1 : 1
   }
-
-  // Intersection filter: video must have ALL selected tags
-  const filtered = videos
-    .filter(v =>
-      activeTags.length === 0 || activeTags.every(t => v.tags.includes(t))
-    )
-    .sort((a, b) => {
-      if (a.status === b.status) return 0
-      return a.status === 'published' ? -1 : 1
-    })
+  const narrative = videos.filter(v => v.tags.includes('Narrative Short')).sort(byStatus)
+  const otherWork = videos.filter(v => !v.tags.includes('Narrative Short')).sort(byStatus)
 
   function handleCardClick(item: VideoItem) {
     if (item.protected) {
@@ -446,7 +434,7 @@ export default function Portfolio() {
     <section id="portfolio" className="py-32 px-6 border-t border-white/[0.05]">
       <div className="max-w-7xl mx-auto">
 
-        {/* Header */}
+        {/* Narrative */}
         <div ref={ref}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -455,64 +443,43 @@ export default function Portfolio() {
             className="mb-10"
           >
             <p className="text-violet-400 text-[10px] tracking-[0.35em] uppercase mb-4">Selected Work</p>
-            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Portfolio</h2>
-          </motion.div>
-
-          {/* Tag filter */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.7, delay: 0.12 }}
-            className="flex flex-wrap items-center gap-2 mb-10"
-          >
-            {ALL_TAGS.map(tag => {
-              const active = activeTags.includes(tag)
-              const isLang = tag === 'Cantonese' || tag === 'Mandarin'
-              return (
-                <button
-                  key={tag}
-                  onClick={() => toggleTag(tag)}
-                  className={`px-4 py-1.5 text-[10px] tracking-[0.18em] uppercase border transition-all duration-200 ${
-                    active
-                      ? isLang
-                        ? tag === 'Cantonese'
-                          ? 'border-sky-500/70 bg-sky-950/30 text-sky-300'
-                          : 'border-amber-500/70 bg-amber-950/30 text-amber-300'
-                        : 'border-violet-500/70 bg-violet-950/30 text-violet-300'
-                      : 'border-white/[0.1] text-gray-600 hover:border-white/20 hover:text-gray-400'
-                  }`}
-                >
-                  {tag}
-                </button>
-              )
-            })}
-            {activeTags.length > 0 && (
-              <button
-                onClick={() => setActiveTags([])}
-                className="px-3 py-1.5 text-[9px] tracking-[0.2em] uppercase text-gray-700 hover:text-gray-500 transition-colors"
-              >
-                Clear ✕
-              </button>
-            )}
+            <h2 className="text-4xl md:text-6xl font-bold tracking-tight">Narrative</h2>
           </motion.div>
         </div>
 
-        {/* Grid */}
-        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          <AnimatePresence mode="popLayout">
-            {filtered.map(item =>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {narrative.map(item =>
+            item.status === 'published' ? (
+              <PublishedCard key={item.uid} item={item} onClick={() => handleCardClick(item)} />
+            ) : (
+              <ComingSoonCard key={item.uid} item={item} />
+            )
+          )}
+        </div>
+
+        {/* Other Work */}
+        <div className="mt-24">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.8 }}
+            className="mb-10"
+          >
+            <p className="text-violet-400 text-[10px] tracking-[0.35em] uppercase mb-4">Music Videos · Commercial · More</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Other Work</h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+            {otherWork.map(item =>
               item.status === 'published' ? (
                 <PublishedCard key={item.uid} item={item} onClick={() => handleCardClick(item)} />
               ) : (
                 <ComingSoonCard key={item.uid} item={item} />
               )
             )}
-          </AnimatePresence>
-        </motion.div>
-
-        {filtered.length === 0 && (
-          <p className="text-gray-700 text-sm tracking-wider text-center py-20">No projects match this filter.</p>
-        )}
+          </div>
+        </div>
 
         {/* Credits */}
         <div ref={aeRef} className="mt-20 pt-16 border-t border-white/[0.05]">
