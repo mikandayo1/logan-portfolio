@@ -26,17 +26,9 @@ export default function Contact() {
             initial={{ opacity: 0 }}
             animate={isInView ? { opacity: 1 } : {}}
             transition={{ delay: 0.3, duration: 0.8 }}
-            className="text-gray-400 text-base mb-3 max-w-md mx-auto leading-relaxed font-light"
+            className="text-gray-400 text-base mb-12 max-w-md mx-auto leading-relaxed font-light"
           >
-            Seeking opportunities as Assistant Editor or DIT.
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-gray-600 text-sm mb-12 max-w-md mx-auto leading-relaxed font-light"
-          >
-            Available for short film and freelance editing projects. Reach out anytime.
+            Open to editing, DIT, and all things post. Reach out anytime.
           </motion.p>
 
           <motion.a

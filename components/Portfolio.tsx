@@ -154,25 +154,7 @@ const videos: VideoItem[] = [
     status: 'coming_soon',
   },
   {
-    uid: 'mv-2023',
-    id: null,
-    title: 'Music Video',
-    tags: ['Music Video'],
-    role: 'Editor',
-    year: '2023',
-    status: 'coming_soon',
-  },
-  {
     uid: 'mv-2026-a',
-    id: null,
-    title: 'Music Video',
-    tags: ['Music Video'],
-    role: 'Editor',
-    year: '2026',
-    status: 'coming_soon',
-  },
-  {
-    uid: 'mv-2026-b',
     id: null,
     title: 'Music Video',
     tags: ['Music Video'],
@@ -196,6 +178,7 @@ const aeCredits = [
   { title: 'Old Habits Die Hard',            director: 'dir. Jason Wolfmiller',        year: '2025' },
   { title: 'Captain Marisol and Peach Tree', director: 'dir. Sahej Singh Nandrajog',  year: '2025' },
   { title: 'Mr. Wrong',                      director: 'dir. Kaylin Allshouse',        year: '2025' },
+  { title: 'Paper House',                    director: 'dir. Harry Chiao',             year: '2025' },
   { title: 'Federal Crisis',                 director: 'dir. Hannah Pike',             year: '2024' },
   { title: 'Breakfast',                      director: 'dir. Tamás Hevér',             year: '2024' },
 ]
