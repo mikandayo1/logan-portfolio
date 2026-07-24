@@ -5,7 +5,7 @@ import Image from 'next/image'
 import VideoModal from './VideoModal'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Tag = 'Narrative Short' | 'Music Video' | 'Commercial' | 'Promotional' | 'Cantonese' | 'Mandarin'
+type Tag = 'Narrative Short' | 'Documentary' | 'Music Video' | 'Commercial' | 'Promotional' | 'Cantonese' | 'Mandarin'
 type Status = 'published' | 'coming_soon'
 
 interface VideoItem {
@@ -18,11 +18,25 @@ interface VideoItem {
   director?: string
   status: Status
   protected?: boolean
+  thumb?: string
+  award?: string
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 const videos: VideoItem[] = [
   // ── Published ──────────────────────────────────────────────────────────────
+  {
+    uid: 'arcade-dreamer',
+    id: null,
+    title: 'Arcade Dreamer',
+    tags: ['Documentary'],
+    role: 'Director',
+    year: '2023',
+    status: 'published',
+    protected: true,
+    thumb: '/arcade-dreamer.jpg',
+    award: 'Student LA Film Awards · Finalist',
+  },
   {
     uid: 'lpj',
     id: 'sCV1W7zGhpI',
@@ -127,16 +141,6 @@ const videos: VideoItem[] = [
     tags: ['Promotional', 'Mandarin'],
     role: 'Editor',
     year: '2021',
-    status: 'published',
-    protected: true,
-  },
-  {
-    uid: 'census',
-    id: '6MBpZOOot10',
-    title: '數說人口 · 普查數據中的澳門模樣',
-    tags: ['Promotional', 'Cantonese'],
-    role: 'Editor',
-    year: '2022',
     status: 'published',
     protected: true,
   },
@@ -269,8 +273,9 @@ function PasswordModal({
 
 // ── Tag chip ──────────────────────────────────────────────────────────────────
 const tagStyle: Partial<Record<Tag, string>> = {
-  Cantonese: 'text-sky-400/70',
-  Mandarin:  'text-amber-400/70',
+  Cantonese:   'text-sky-400/70',
+  Mandarin:    'text-amber-400/70',
+  Documentary: 'text-emerald-400/70',
 }
 
 function TagPill({ tag }: { tag: Tag }) {
@@ -291,6 +296,8 @@ function PublishedCard({
 }) {
   const langTags = item.tags.filter(t => t === 'Cantonese' || t === 'Mandarin')
   const typeTags = item.tags.filter(t => t !== 'Cantonese' && t !== 'Mandarin')
+  const infoOnly = !item.id
+  const thumbSrc = item.thumb ?? `https://img.youtube.com/vi/${item.id}/maxresdefault.jpg`
 
   return (
     <motion.div
@@ -299,12 +306,12 @@ function PublishedCard({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] }}
-      className="group relative cursor-pointer overflow-hidden"
+      className={`group relative overflow-hidden ${infoOnly ? '' : 'cursor-pointer'}`}
       onClick={onClick}
     >
       <div className="relative aspect-video overflow-hidden bg-gray-950">
         <Image
-          src={`https://img.youtube.com/vi/${item.id}/maxresdefault.jpg`}
+          src={thumbSrc}
           alt={item.title}
           fill
           className="object-cover transition-all duration-700 group-hover:scale-105 group-hover:brightness-50"
@@ -319,18 +326,20 @@ function PublishedCard({
             <svg className="w-2.5 h-2.5 text-violet-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
             </svg>
-            <span className="text-violet-400 text-[9px] tracking-widest uppercase">Private</span>
+            <span className="text-violet-400 text-[9px] tracking-widest uppercase">{infoOnly ? 'Not Public' : 'Private'}</span>
           </div>
         )}
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <div className="w-12 h-12 rounded-full border border-white/50 flex items-center justify-center backdrop-blur-sm bg-black/20">
-            {item.protected
-              ? <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-              : <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-            }
+        {!infoOnly && (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="w-12 h-12 rounded-full border border-white/50 flex items-center justify-center backdrop-blur-sm bg-black/20">
+              {item.protected
+                ? <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                : <svg className="w-4 h-4 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+              }
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
           <div className="flex items-end justify-between gap-2">
@@ -338,14 +347,17 @@ function PublishedCard({
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 {typeTags.map(t => <TagPill key={t} tag={t} />)}
                 {langTags.map(t => <TagPill key={t} tag={t} />)}
-                <span className="text-gray-500 text-[9px] tracking-[0.18em] uppercase">{item.role}</span>
+                <span className="text-gray-400 text-[9px] tracking-[0.18em] uppercase">{item.role}</span>
               </div>
               <h3 className="text-white font-semibold text-sm leading-tight">{item.title}</h3>
               {item.director && (
-                <p className="text-gray-500 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
+                <p className="text-gray-400 text-[10px] mt-0.5 tracking-wide">{item.director}</p>
+              )}
+              {item.award && (
+                <p className="text-violet-300/90 text-[10px] mt-0.5 tracking-wide">{item.award}</p>
               )}
             </div>
-            <span className="text-gray-600 text-[10px] tracking-widest flex-shrink-0">{item.year}</span>
+            <span className="text-gray-400 text-[10px] tracking-widest flex-shrink-0">{item.year}</span>
           </div>
         </div>
         <div className="absolute inset-0 border border-violet-500/0 group-hover:border-violet-500/25 transition-colors duration-500" />
@@ -377,10 +389,10 @@ function ComingSoonCard({ item }: { item: VideoItem }) {
           <span className="text-violet-400/50 text-[9px] tracking-[0.25em] uppercase">In Production</span>
         </div>
         <div className="absolute bottom-0 left-0 right-0 p-4">
-          <p className="text-violet-400/30 text-[9px] tracking-[0.18em] uppercase mb-1">{item.role}</p>
-          <h3 className="text-gray-600 font-semibold text-sm">{item.title}</h3>
-          {item.director && <p className="text-gray-700 text-[10px] mt-0.5">{item.director}</p>}
-          <span className="text-gray-700 text-[10px] tracking-widest mt-1 block">{item.year}</span>
+          <p className="text-violet-400/60 text-[10px] tracking-[0.18em] uppercase mb-1">{item.role}</p>
+          <h3 className="text-gray-300 font-semibold text-sm">{item.title}</h3>
+          {item.director && <p className="text-gray-400 text-[11px] mt-0.5">{item.director}</p>}
+          <span className="text-gray-400 text-[11px] tracking-widest mt-1 block">{item.year}</span>
         </div>
       </div>
     </motion.div>
@@ -397,10 +409,10 @@ function CreditRow({ credit, delay, inView }: { credit: { title: string; directo
       className="flex items-baseline justify-between gap-4 py-3.5 border-b border-white/[0.06] first:border-t first:border-white/[0.06]"
     >
       <div className="min-w-0">
-        <span className="text-white text-sm font-medium tracking-wide block">{credit.title}</span>
-        <span className="text-gray-600 text-[10px] tracking-wide mt-0.5 block">{credit.director}</span>
+        <span className="text-white text-[15px] font-medium tracking-wide block">{credit.title}</span>
+        <span className="text-gray-400 text-[11px] tracking-wide mt-0.5 block">{credit.director}</span>
       </div>
-      <span className="text-gray-700 text-[10px] tracking-widest flex-shrink-0">{credit.year}</span>
+      <span className="text-gray-400 text-[11px] tracking-widest flex-shrink-0">{credit.year}</span>
     </motion.div>
   )
 }
@@ -419,10 +431,15 @@ export default function Portfolio() {
     if (a.status === b.status) return 0
     return a.status === 'published' ? -1 : 1
   }
-  const narrative = videos.filter(v => v.tags.includes('Narrative Short')).sort(byStatus)
-  const otherWork = videos.filter(v => !v.tags.includes('Narrative Short')).sort(byStatus)
+  const filmTags = (v: VideoItem) => v.tags.includes('Narrative Short') || v.tags.includes('Documentary')
+  const narrative = videos.filter(filmTags).sort(byStatus)
+  const otherWork = videos.filter(v => !filmTags(v)).sort(byStatus)
 
   function handleCardClick(item: VideoItem) {
+    if (!item.id) {
+      // Info-only card (e.g. festival work with no screening link) — nothing to open
+      return
+    }
     if (item.protected) {
       setPendingProtected(item)
     } else {

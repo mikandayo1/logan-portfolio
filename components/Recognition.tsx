@@ -25,8 +25,8 @@ const STATUS_RANK = ['winner', 'finalist', 'honorable_mention', 'selected']
 const statusColor: Record<string, string> = {
   winner:            'text-violet-300',
   finalist:          'text-violet-400/70',
-  honorable_mention: 'text-gray-400',
-  selected:          'text-gray-600',
+  honorable_mention: 'text-gray-300',
+  selected:          'text-gray-400',
 }
 
 // ── Skills ────────────────────────────────────────────────────────────────────
@@ -82,10 +82,10 @@ export default function Recognition({ festivalData }: { festivalData: FestivalDa
                   transition={{ duration: 0.55, delay: 0.08 + i * 0.07 }}
                   className="flex items-baseline justify-between gap-6 py-4 border-b border-white/[0.06] first:border-t first:border-white/[0.06]"
                 >
-                  <p className="text-white font-light text-sm leading-snug tracking-wide">
+                  <p className="text-white font-normal text-[15px] leading-snug tracking-wide">
                     {fest.name}
                   </p>
-                  <p className={`text-[10px] tracking-[0.15em] uppercase flex-shrink-0 font-light ${statusColor[fest.status] ?? 'text-gray-600'}`}>
+                  <p className={`text-[11px] tracking-[0.15em] uppercase flex-shrink-0 font-normal ${statusColor[fest.status] ?? 'text-gray-400'}`}>
                     {fest.label}
                   </p>
                 </motion.div>
