@@ -23,7 +23,12 @@ export default async function Home() {
   const festivalData = await getFestivalData()
 
   return (
-    <main className="bg-black">
+    <main
+      style={{
+        background:
+          'linear-gradient(to bottom, #000000 0%, #000000 52%, #08060f 72%, #0f0a1e 88%, #17102b 100%)',
+      }}
+    >
       <Navbar />
       <Hero />
       <About />

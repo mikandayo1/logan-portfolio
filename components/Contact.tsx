@@ -65,12 +65,21 @@ export default function Contact() {
             </a>
             <span className="w-px h-3 bg-white/15" />
             <a
-              href="/resume.pdf"
+              href="/resume-editor.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-violet-400 text-[10px] tracking-[0.25em] uppercase transition-colors duration-300"
             >
-              Resume ↗
+              Resume · Editor ↗
+            </a>
+            <span className="w-px h-3 bg-white/15" />
+            <a
+              href="/resume-ae.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gray-600 hover:text-violet-400 text-[10px] tracking-[0.25em] uppercase transition-colors duration-300"
+            >
+              Resume · AE ↗
             </a>
           </motion.div>
         </motion.div>

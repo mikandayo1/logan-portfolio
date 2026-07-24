@@ -49,7 +49,7 @@ export default function Navbar() {
             </a>
           ))}
           <a
-            href="/resume.pdf"
+            href="/resume-editor.pdf"
             target="_blank"
             rel="noopener noreferrer"
             className="border border-violet-500/50 text-violet-400 px-5 py-2 text-[10px] tracking-[0.2em] uppercase hover:bg-violet-600 hover:text-white hover:border-violet-600 transition-all duration-300"
@@ -104,7 +104,7 @@ export default function Navbar() {
                 </a>
               ))}
               <a
-                href="/resume.pdf"
+                href="/resume-editor.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-violet-400 tracking-[0.15em] uppercase text-lg"

@@ -51,7 +51,7 @@ export default function Hero() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.9, duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-[4rem] sm:text-[7rem] md:text-[10rem] font-bold tracking-tighter leading-none"
+            className="font-lust text-[4rem] sm:text-[7rem] md:text-[10rem] font-normal tracking-tight leading-none"
           >
             LOGAN
           </motion.h1>
@@ -61,7 +61,7 @@ export default function Hero() {
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 1.05, duration: 1, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="text-[4rem] sm:text-[7rem] md:text-[10rem] font-bold tracking-tighter leading-none text-transparent bg-clip-text bg-gradient-to-r from-white via-violet-200 to-violet-400"
+            className="font-lust text-[4rem] sm:text-[7rem] md:text-[10rem] font-normal tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-white via-violet-200 to-violet-400"
           >
             LUO
           </motion.h1>

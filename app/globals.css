@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Lust Sans';
+  src: url('/fonts/lust-sans.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-lust {
+  font-family: 'Lust Sans', 'Playfair Display', Georgia, serif;
+}
+
 * {
   box-sizing: border-box;
   padding: 0;

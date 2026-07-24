@@ -5,7 +5,7 @@ import Image from 'next/image'
 import VideoModal from './VideoModal'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
-type Tag = 'Narrative Short' | 'Documentary' | 'Music Video' | 'Commercial' | 'Promotional' | 'Cantonese' | 'Mandarin'
+type Tag = 'Narrative Short' | 'Documentary' | 'Music Video' | 'Commercial' | 'Promotional' | 'Reel' | 'Cantonese' | 'Mandarin'
 type Status = 'published' | 'coming_soon'
 
 interface VideoItem {
@@ -25,18 +25,6 @@ interface VideoItem {
 // ── Data ──────────────────────────────────────────────────────────────────────
 const videos: VideoItem[] = [
   // ── Published ──────────────────────────────────────────────────────────────
-  {
-    uid: 'arcade-dreamer',
-    id: null,
-    title: 'Arcade Dreamer',
-    tags: ['Documentary'],
-    role: 'Director',
-    year: '2023',
-    status: 'published',
-    protected: true,
-    thumb: '/arcade-dreamer.jpg',
-    award: 'Student LA Film Awards · Finalist',
-  },
   {
     uid: 'lpj',
     id: 'sCV1W7zGhpI',
@@ -81,7 +69,7 @@ const videos: VideoItem[] = [
     uid: 'reel23',
     id: 'EzriLrAqcOU',
     title: 'Cinematography Reel 2023',
-    tags: ['Narrative Short'],
+    tags: ['Reel'],
     role: 'Cinematographer',
     year: '2023',
     status: 'published',
@@ -143,6 +131,18 @@ const videos: VideoItem[] = [
     year: '2021',
     status: 'published',
     protected: true,
+  },
+  {
+    uid: 'arcade-dreamer',
+    id: null,
+    title: 'Arcade Dreamer',
+    tags: ['Documentary'],
+    role: 'Director',
+    year: '2023',
+    status: 'published',
+    protected: true,
+    thumb: '/arcade-dreamer.jpg',
+    award: 'Student LA Film Awards · Finalist',
   },
   // ── Coming Soon ────────────────────────────────────────────────────────────
   {
@@ -276,6 +276,7 @@ const tagStyle: Partial<Record<Tag, string>> = {
   Cantonese:   'text-sky-400/70',
   Mandarin:    'text-amber-400/70',
   Documentary: 'text-emerald-400/70',
+  Reel:        'text-rose-400/70',
 }
 
 function TagPill({ tag }: { tag: Tag }) {
